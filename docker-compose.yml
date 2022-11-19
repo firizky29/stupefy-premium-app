@@ -1,0 +1,22 @@
+version: '3.3'
+services:
+  server:
+    image: stupefy-premium-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
+    networks:
+      - stupefy-network
+    env_file: .env
+    command: npm run dev
+
+
+networks:
+  stupefy-network:
+    driver: bridge
