@@ -4,9 +4,10 @@ import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import Navbar from './components/Navbar'
+import Sidebar from './components/Sidebar'
 
 import Login from './pages/Login'
-
+import Home from './pages/Home'
 
 
 function App() {
@@ -67,22 +68,25 @@ function App() {
 	return (
 		<Router>
 			<div className="App">
-				{/* <Navbar {...props} /> */}
 				{/* <SuccessAlert {...props} /> */}
-				<div className="container-fluid">
-					<div className="row">
-						{/* <Sidebar {...props}/> */}
-						<Routes>
-							{/* <Route path="/" element={<Home {...props} />} /> */}
+				<Sidebar {...props}/>
+				<div className="side-container">
+					<Navbar {...props} />
+					<Routes>
+							<Route path="/" element={<Home {...props} />} />
 							<Route path="/login" element={<Login {...props} />} />
 							{/* <Route path="/register" element={<Register {...props} />} /> */}
 							{/* <Route path="/users/:verification_status" element={<Users {...props} />} /> */}
 							{/* <Route path="/users" element={<Users {...props} />} /> */}
 							{/* <Route path="/transactions/:transaction_status" element={<Transactions {...props} />} /> */}
 							{/* <Route path="/transactions" element={<Transactions {...props} />} /> */}
-						</Routes>
-					</div>
+					</Routes>
 				</div>
+				{/* <div className="container-fluid">
+					<div className="row">
+						
+					</div>
+				</div> */}
 
 			</div>
 		</Router>
