@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+
+import Navbar from './components/Navbar'
+
 import Login from './pages/Login'
 
 
@@ -64,8 +67,8 @@ function App() {
 	return (
 		<Router>
 			<div className="App">
-				{/* <Navbar {...props} />
-				<SuccessAlert {...props} /> */}
+				{/* <Navbar {...props} /> */}
+				{/* <SuccessAlert {...props} /> */}
 				<div className="container-fluid">
 					<div className="row">
 						{/* <Sidebar {...props}/> */}
