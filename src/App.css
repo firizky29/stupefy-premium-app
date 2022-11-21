@@ -391,7 +391,6 @@ a .sidebar-icon{
 
   .nav-content .user-info{
     width: 230px ;
-    background-color: blue;
   }
 
   .sidebar{
@@ -404,7 +403,7 @@ a .sidebar-icon{
     width: 320px;
     /* background-color: red; */
     border-right: #161616 1px solid;
-    position: absolute;
+    position: fixed;
     z-index: 1;
     top:0;
     left:0;

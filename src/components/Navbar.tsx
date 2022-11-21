@@ -14,8 +14,6 @@ const Navbar = (props: any) => {
                     <div className="nav-content">
                         <button className="btn btn-dark bg-dark open-btn" onClick={openNav}>
                             <span>&#9776;</span>
-                            {/* <span className="open-sidebar-button-line"></span>
-                            <span className="open-sidebar-button-line"></span> */}
                         </button>
                         {/* <div className="user-info"> */}
                             <div className="container user-info ms-auto">
