@@ -40,8 +40,8 @@ const Login = (props: any) => {
     // }
     // else {
         return (
-            <div className="auth-wrapper pd-10">
-                <div className="auth-inner mb-4 mt-3">
+            <div className="h-100 auth-wrapper pd-10 d-flex justify-content-center align-items-center">
+                <div className="auth-inner mb-4 mt-3 card py-3 px-3">
                     <form onSubmit={submit}>
                         <h3>Login to Stupefy Premium App</h3>
                         <div className="mb-3">
@@ -71,6 +71,7 @@ const Login = (props: any) => {
                             </button>
                         </div>
                     </form>
+                    <div className="text-center">Belum punya akun premium? <a href="/register">Buat akun premium</a>!</div>
                 </div>
             </div>
         );
