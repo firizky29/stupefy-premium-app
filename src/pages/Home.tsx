@@ -11,6 +11,7 @@ const Home = (props:any) => {
                 Your Song
             </div>
             <table className="contents">
+                <tbody>
                 {
                     Array.isArray(array) ? array.map((item:any) => {
                         return (
@@ -19,7 +20,9 @@ const Home = (props:any) => {
                             </tr>
                         )
                     }) : null
+
                 }
+                </tbody>
             </table>
         </div>
     );

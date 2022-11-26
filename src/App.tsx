@@ -9,6 +9,7 @@ import Sidebar from './components/Sidebar'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Home from './pages/Home'
+import SongForm from './pages/SongForm'
 
 
 function App() {
@@ -65,7 +66,7 @@ function App() {
 	// 	)();
 	// }, [isLoggedIn]);
 
-	if(!isLoggedIn){
+	if(isLoggedIn){
 		return(
 			<Router>
 				<div className="App">
@@ -86,6 +87,10 @@ function App() {
 					<div className="side-container">
 						<Navbar {...props} />
 						<Routes>
+								<Route path="/song" element={<SongForm {...props}/>}>
+									<Route path="create" element={<SongForm {...props} />} />
+									<Route path="edit/:id" element={<SongForm {...props} />} />
+								</Route>
 								<Route path="/" element={<Home {...props} />} />
 								{/* <Route path="/register" element={<Register {...props} />} /> */}
 								{/* <Route path="/users/:verification_status" element={<Users {...props} />} /> */}
