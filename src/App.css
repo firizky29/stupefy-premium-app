@@ -329,7 +329,7 @@ a .sidebar-icon{
   object-fit: cover;
 }
 
-.pagination {
+/* .pagination {
   display: flex;
   flex-direction: row;
   margin: 0;
@@ -351,17 +351,50 @@ a .sidebar-icon{
   font-size: 1.5rem;
   font-family: 'Inter';
   color: #FFFFFF;
-  /* background-color: #161616; */
+  /* background-color: #161616;
   margin-left: 5px;
   text-align: center;
-  /* box-sizing: border-box; */
+  /* box-sizing: border-box; 
   width: 30px;
   border-radius: 5px;
-}
+} 
 
 .page-item .active {
   cursor: pointer;
+} */
+
+.page-item.active .page-link {
+  z-index: 3;
+  color: #fff !important;
+  background-color: #1DB954 !important;
+  font-family: 'Inter' !important;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none;
 }
+
+.page-item .page-link {
+  z-index: 3;
+  color: white !important;
+  border: none;
+  border-radius: 5px;
+  background-color: #161616 !important;
+  font-family: 'Inter' !important;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none;
+  margin-left: 2px !important;
+}
+
+.page-item .page-link:hover {
+  z-index: 3;
+  background-color: #1DB954 !important;
+}
+
+.page-item.disabled .page-link {
+  display: none;
+}
+
 
 .logo-img{
   height: 80px;

@@ -1,0 +1,20 @@
+th {
+    color: white;
+  
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 300 !important;
+    font-size: 18px;
+}
+
+thead{
+    border-bottom: white 0.25px solid;
+    margin-bottom: 100px;
+}
+
+@media screen and (max-width: 768px) {
+    .action-name{
+        display: none;
+    }
+}
+  
