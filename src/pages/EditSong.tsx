@@ -41,14 +41,18 @@ const EditSong = (props: any) => {
             });
 
             if(response.status === 200){
+                props.setShowAlert(true);
+                props.setAlert({
+                    type: 'success',
+                    message: 'Song updated successfully'
+                });
                 navigate('/');
             } else{
-                const data = await response.text();
-                console.log(data)
-                // setErrors({
-                //     ...errors,
-                //     message: data.message
-                // });
+                props.setShowAlert(true);
+                props.setAlert({
+                    type: 'error',
+                    message: response.statusText
+                })
             }
 
         }

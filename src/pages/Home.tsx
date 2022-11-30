@@ -4,7 +4,7 @@ import ReactPaginate from 'react-paginate';
 import moment from 'moment';
 import '../assets/css/home.css';
 
-import { Dropdown, DropdownButton } from 'react-bootstrap';
+import { Button, Dropdown, DropdownButton, Modal } from 'react-bootstrap';
 import { API_URL } from '../config';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -17,17 +17,26 @@ library.add(faPlay, faTrash, faEdit);
 // const array = [{id: 1, name: 'song1'}, {id: 2, name: 'song2'}, {id: 3, name: 'song3'}];
 // const array: any[] =  [];
 
-const Home = (props:any) => {
+const Home = (props: any) => {
+    const [show, setShow] = useState(false);
+
     const [songs, setSongs] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const [limit, setLimit] = useState("2");
     const [currentPage, setCurrentPage] = useState(1);
 
-    let navigate = useNavigate(); 
-
+    const [toBeDeleted, setToBeDeleted] = useState({
+        id: 0,
+        name: ''
+    })
+    
+    let navigate = useNavigate();
+    
+    const handleClose = () => setShow(false);
+    
     useEffect(() => {
         (async () => {
-            const response = await fetch(`${API_URL}/song?limit=${limit}`, {
+            const response = await fetch(`${API_URL}/song?page=${currentPage}&limit=${limit}`, {
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
             });
@@ -36,16 +45,20 @@ const Home = (props:any) => {
                 // console.log(response);
                 const data = await response.json();
                 // console.log(data);
-                setCurrentPage(1);
+                
                 setSongs(data.data);
                 setTotalPages(data.total_page);
+                if(currentPage > data.total_page) {
+                    setCurrentPage(data.total_page);
+                }
+                
             } else {
                 console.log(response);
                 console.log(response.status);
                 setSongs([]);
             }
         })();
-    }, [limit]);
+    }, [limit, currentPage]);
 
     const onChangeLimit = (e: any) => {
         setLimit(e);
@@ -80,7 +93,64 @@ const Home = (props:any) => {
         props.setOldSongTitle(title);
         navigate(`/song/edit/${id}`);
     }
-    
+
+    const deleteSong = (id: number, title: string) => {
+        setShow(true);
+        setToBeDeleted({    
+            id: id,
+            name: title
+        });
+    }
+
+    const confirmedDelete = async () => {
+        const response = await fetch(`${API_URL}/song/${toBeDeleted.id}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+        });
+
+        if (response.status === 200) {
+            setShow(false);
+
+            props.setShowAlert(true);
+            props.setAlert({
+                type: 'success',
+                message: 'Song deleted successfully'
+            });
+
+            (async () => {
+                const response = await fetch(`${API_URL}/song?page=${currentPage}&limit=${limit}`, {
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                });
+
+                if (response.status === 200) {
+                    const data = await response.json();
+                    setSongs(data.data);
+                    setTotalPages(data.total_page);
+                    
+                    if(currentPage > 1 && data.data.length === 0){
+                        setCurrentPage(currentPage - 1);
+                    }
+                } else {
+                    setSongs([]);
+                    setCurrentPage(0);
+                    setTotalPages(0);
+                }
+            }
+            )();
+        } else {
+            props.setShowAlert(true);
+            props.setAlert({
+                type: 'danger',
+                message: response.statusText
+            });
+        }
+    }
+
+
+       
+
     return (
         <div className='content'>
             <div className="container-title">
@@ -89,6 +159,20 @@ const Home = (props:any) => {
             {
                 Array.isArray(songs) && songs.length > 0 ? (
                     <div className="container">
+                        <Modal show={show} onHide={handleClose}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Delete Confirmation</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>Are you sure you want to delete {toBeDeleted.name}?</Modal.Body>
+                            <Modal.Footer>
+                                <Button variant="secondary" onClick={handleClose}>
+                                    Close
+                                </Button>
+                                <Button variant="danger" onClick={confirmedDelete}>
+                                    Delete
+                                </Button>
+                            </Modal.Footer>
+                        </Modal>
                         <div className="clearfix d-flex justify-content-end gap-4">
                             <div className="align-self-center m-0 p-0">
                                 <p className="font-weight-light m-0 mr-2 text-light">Rows per page: </p>
@@ -99,7 +183,7 @@ const Home = (props:any) => {
                                     id="dropdown-menu-align-right"
                                     variant="dark"
                                     onSelect={onChangeLimit}
-                                    >
+                                >
                                     <Dropdown.Item eventKey="10" active={limit === "10"}>10</Dropdown.Item>
                                     <Dropdown.Item eventKey="15" active={limit === "15"}>15</Dropdown.Item>
                                     <Dropdown.Item eventKey="20" active={limit === "20"}>20</Dropdown.Item>
@@ -118,34 +202,34 @@ const Home = (props:any) => {
                                 </tr>
                             </thead>
                             <tbody>
-                            {
-                                Array.isArray(songs) ? songs.map((item:any, index) => {
-                                    console.log(item)
-                                    return (
+                                {
+                                    Array.isArray(songs) ? songs.map((item: any, index) => {
+                                        console.log(item)
+                                        return (
                                             <tr className="content-entry" key={item.song_id}>
-                                                <td className='text-center col-md-1'>{parseInt(limit)*(currentPage-1)+index+1}</td>
+                                                <td className='text-center col-md-1'>{parseInt(limit) * (currentPage - 1) + index + 1}</td>
                                                 <td className='text-center col-md-4 fw-normal'>{item.Judul}</td>
                                                 <td className='text-center col-md-3 fw-normal'>{moment(item.createdAt).fromNow()}</td>
                                                 <td className='text-center col-md-4'>
                                                     <div className="btn-group">
-                                                        <button className="btn btn-primary" onClick={()=>{playSong(item.song_id, item.Judul)}}>
+                                                        <button className="btn btn-primary" onClick={() => { playSong(item.song_id, item.Judul) }}>
                                                             <FontAwesomeIcon icon="play" />
                                                             <span className="action-name"> Play </span>
                                                         </button>
-                                                        <button className="btn btn-secondary" onClick={()=>{editSong(item.song_id, item.Judul)}}>
+                                                        <button className="btn btn-secondary" onClick={() => { editSong(item.song_id, item.Judul) }}>
                                                             <FontAwesomeIcon icon="edit" />
                                                             <span className="action-name"> Edit </span>
                                                         </button>
                                                         <button className="btn btn-danger">
                                                             <FontAwesomeIcon icon="trash" />
-                                                            <span className="action-name"> Delete </span>
+                                                            <span className="action-name" onClick={() => { deleteSong(item.song_id, item.Judul )}}> Delete </span>
                                                         </button>
                                                     </div>
                                                 </td>
                                             </tr>
-                                    )
-                                }) : null
-                            }
+                                        )
+                                    }) : null
+                                }
                             </tbody>
                         </table>
                         <div className="pagination clearfix ms-auto d-flex justify-content-center mt-3">
@@ -190,7 +274,7 @@ const Home = (props:any) => {
 };
 
 Home.propTypes = {
-    
+
 };
 
 export default Home;

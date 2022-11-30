@@ -47,14 +47,18 @@ const AddSong = (props: any) => {
             });
 
             if(response.status === 201){
+                props.setShowAlert(true);
+                props.setAlert({
+                    type: 'success',
+                    message: 'Song added successfully'
+                })
                 navigate('/');
             } else{
-                const data = await response.text();
-                console.log(data)
-                // setErrors({
-                //     ...errors,
-                //     message: data.message
-                // });
+                props.setShowAlert(true);
+                props.setAlert({
+                    type: 'error',
+                    message: response.statusText
+                })
             }
 
         }

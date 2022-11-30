@@ -8,6 +8,7 @@ import Sidebar from './components/Sidebar'
 import SongController from './components/SongController'
 import Alerts from './components/Alerts'
 
+
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Home from './pages/Home'
@@ -23,6 +24,9 @@ function App() {
 		message: 'Gagal'
 	})
 	const [showAlert, setShowAlert] = useState(false)
+
+
+
 	const [showSongController, setShowSongController] = useState(false)
 	const [songId, setSongId] = useState(0)
 	const [songName, setSongName] = useState(0)
@@ -56,7 +60,7 @@ function App() {
 		showSongController,
 		user,
 		setAlert,
-		setShowAlert
+		setShowAlert,
 	}
 
 	const loginProps = {
@@ -118,6 +122,7 @@ function App() {
 		alert,
 		showAlert
 	}
+
 
 
 
