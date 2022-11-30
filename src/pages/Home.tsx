@@ -10,8 +10,8 @@ import '../assets/css/home.css';
 
 library.add(faPlay, faTrash, faEdit);
 
-// const array = [{id: 1, name: 'song1'}, {id: 2, name: 'song2'}, {id: 3, name: 'song3'}];
-const array: any[] =  [];
+const array = [{id: 1, name: 'song1'}, {id: 2, name: 'song2'}, {id: 3, name: 'song3'}];
+// const array: any[] =  [];
 
 const Home = (props:any) => {
     // const [users, setUsers] = useState([]);
@@ -122,7 +122,11 @@ const Home = (props:any) => {
                 ) : (
                     <div className="container p-0">
                         <table className="contents">
-                            <tr>You dont have song yet </tr>
+                            <tbody>
+                                <tr>
+                                    <td>You dont have song yet </td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 )

@@ -12,7 +12,7 @@ const Navbar = (props: any) => {
             <header>
                 <nav>
                     <div className="nav-content">
-                        <button className="btn btn-dark bg-dark open-btn" onClick={openNav}>
+                        <button type="button" className="btn btn-dark bg-dark open-btn" onClick={openNav}>
                             <span>&#9776;</span>
                         </button>
                         {/* <div className="user-info"> */}

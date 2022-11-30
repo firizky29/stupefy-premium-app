@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
+import SongController from './components/SongController'
 
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -99,6 +100,7 @@ function App() {
 								{/* <Route path="/transactions" element={<Transactions {...props} />} /> */}
 						</Routes>
 					</div>
+					<SongController {...props}/>
 					{/* <div className="container-fluid">
 						<div className="row">
 							

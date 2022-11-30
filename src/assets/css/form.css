@@ -148,9 +148,9 @@ input, select{
     font-weight: 600;
     font-size: 12px;
     line-height: 30px;
-    margin-bottom: -30px;
+    margin-bottom: -25px;
     padding-left: 20px;
-    display: none;
+    display: inline-block;
     padding-top: 0;
 }
 
