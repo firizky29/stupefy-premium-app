@@ -1,14 +1,21 @@
-import React, { SyntheticEvent, useState } from 'react';
+import React, { SyntheticEvent, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import '../assets/css/form.css';
 import AddSongIcon from '../assets/img/icons-add-song-grey.png';
+import ReactAudioPlayer from 'react-audio-player';
 
-const array = [{ id: 1, name: 'song4' }, { id: 2, name: 'song2' }, { id: 3, name: 'song3' }];
+import '../assets/css/form.css';
 
-const SongForm = (props: any) => {
+import { useNavigate, useParams } from 'react-router-dom';
+import { API_URL } from '../config';
+
+const EditSong = (props: any) => {
+    const url = useParams();
     const [song, setSong] = useState<any | null>(null);
+    const [useOldSong, setUseOldSong] = useState<boolean>(true);
     const [audioName, setAudioName] = useState("Select song file");
     const [title, setTitle] = useState("");
+
+    let navigate = useNavigate();
 
     const [errors, setErrors] = useState({
         title: '',
@@ -16,18 +23,43 @@ const SongForm = (props: any) => {
         message: ''
     });
 
-    const submit = (event: SyntheticEvent) => {
+    const submit = async (event: SyntheticEvent) => {
         event.preventDefault();
         if(!errors.title && !errors.audio && !errors.message) {
-            console.log("submit");
+            // Create song
+            const form = document.getElementById("song-form") as HTMLFormElement;
+            const formData = new FormData(form);
+            // for(var pair of formData.entries()) {
+            //     console.log(pair[0]+ ', '+ pair[1]);
+            // }
+            // console.log(formData)
+            
+            const response = await fetch(`${API_URL}/song/${url.id}`, {
+                credentials: 'include',
+                method: 'PUT',
+                body: formData
+            });
+
+            if(response.status === 200){
+                navigate('/');
+            } else{
+                const data = await response.text();
+                console.log(data)
+                // setErrors({
+                //     ...errors,
+                //     message: data.message
+                // });
+            }
+
         }
     }
 
     const getSong = (event: SyntheticEvent) => {
-        (document.getElementById("song-file") as HTMLInputElement).click();
+        (document.getElementById("file") as HTMLInputElement).click();
     }
     
     const previewSong = (event: SyntheticEvent) => {
+        event.preventDefault();
         const target = event.target as HTMLInputElement;
         let files = target.files;
         if (files) {
@@ -40,16 +72,19 @@ const SongForm = (props: any) => {
                 setAudioName(files[0].name);
                 fileReader.onload = (e) => {
                     setSong(e.target?.result);
+                    setUseOldSong(false);
                 }
                 
                 fileReader.onerror = (error) => {
                     setErrors({ ...errors, audio: 'There is an error while reading file' });
                     setAudioName("Select song file");
+                    setSong(null);
                 }
 
                 fileReader.onabort = (error) => {
                     setErrors({ ...errors, audio: 'There is an error while reading file' });
                     setAudioName("Select song file");
+                    setSong(null);
                 }
 
             }
@@ -61,6 +96,7 @@ const SongForm = (props: any) => {
     const onInputTitle = (event: SyntheticEvent) => {
         const target = event.target as HTMLInputElement;
         const value = target.value;
+        setTitle(value);
         if (value.length > 255) {
             setErrors({ ...errors, title: 'Title must be less than 100 characters' });
         }
@@ -72,16 +108,26 @@ const SongForm = (props: any) => {
         }
     }
 
+
+    const onLoad = () => {
+        props.setShowSongController(false);
+        setTitle(props.oldSongTitle);
+    };
+
+    useEffect(() => {
+        onLoad();
+    }, []);
+
     return (
         <div className='content'>
             <div className="container-title">
-                Add Song
+                { props.formType }
             </div>
-            <form onSubmit={submit} encType="multipart/form-data" className='contents'>
+            <form onSubmit={submit} encType="multipart/form-data" className='contents' id='song-form'>
                 <div className="input-group-0">
                     <div className="input-container">
                         <label>Title</label>
-                        <input type="text" name="song-title" id="song-title" placeholder="Song Title" required onInput={onInputTitle}/>
+                        <input value = {title} type="text" name="Judul" id="title" placeholder="Song Title" required onInput={onInputTitle}/>
                         <div className="error-message">{errors.title}</div>
                     </div>
                 </div>
@@ -91,19 +137,23 @@ const SongForm = (props: any) => {
                     <div className="field-with-icon">
                         <img src={AddSongIcon} alt="Add Song Icon" />
                         <div className="file-uploader">
-                            <input type="text" name="song-path" id="song-path" placeholder={audioName} disabled required />
+                            <input type="text" name="song-path" id="song-path" placeholder={audioName} disabled />
                             <div className="upload-button" onClick={getSong}>Select File</div>
                         </div>
-                        <input type="file" name="song-file" id="song-file"
-                            accept="audio/*" onChange={previewSong} required hidden />
+                        <input type="file" name="file" id="file"
+                            accept="audio/*" onChange={previewSong} hidden />
                     </div>
                     <div className="error-message">{errors.audio}</div>
 
-                    <audio id="add-audio" controls >
-                        <source type="audio/mp3" id="src_mp3" src={song} />
-                        <source type="audio/ogg" id="src_ogg" src={song} />
-                        Your browser does not support the audio element.
-                    </audio>
+                    {useOldSong?
+                        <ReactAudioPlayer src={`${API_URL}/song/${url.id}`} controls/>
+                        : 
+                        <audio id="add-audio" controls>
+                            <source type="audio/mp3" id="src_mp3" src={song} />
+                            <source type="audio/ogg" id="src_ogg" src={song} />
+                            Your browser does not support the audio element.
+                        </audio>
+                    }
                 </div>
                 <input type="submit" value="Submit" name="submit-button" id="submit" />
             </form>
@@ -111,8 +161,8 @@ const SongForm = (props: any) => {
     );
 };
 
-SongForm.propTypes = {
+EditSong.propTypes = {
 
 };
 
-export default SongForm;
+export default EditSong;

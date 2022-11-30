@@ -1,23 +1,51 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import ReactPaginate from 'react-paginate';
+import moment from 'moment';
+import '../assets/css/home.css';
 
+import { Dropdown, DropdownButton } from 'react-bootstrap';
+import { API_URL } from '../config';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faPlay, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
-import { Dropdown, DropdownButton } from 'react-bootstrap';
-import '../assets/css/home.css';
+
 
 library.add(faPlay, faTrash, faEdit);
 
-const array = [{id: 1, name: 'song1'}, {id: 2, name: 'song2'}, {id: 3, name: 'song3'}];
+// const array = [{id: 1, name: 'song1'}, {id: 2, name: 'song2'}, {id: 3, name: 'song3'}];
 // const array: any[] =  [];
 
 const Home = (props:any) => {
-    // const [users, setUsers] = useState([]);
+    const [songs, setSongs] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
-    const [limit, setLimit] = useState("10");
+    const [limit, setLimit] = useState("2");
     const [currentPage, setCurrentPage] = useState(1);
+
+    let navigate = useNavigate(); 
+
+    useEffect(() => {
+        (async () => {
+            const response = await fetch(`${API_URL}/song?limit=${limit}`, {
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+            });
+
+            if (response.status === 200) {
+                // console.log(response);
+                const data = await response.json();
+                // console.log(data);
+                setCurrentPage(1);
+                setSongs(data.data);
+                setTotalPages(data.total_page);
+            } else {
+                console.log(response);
+                console.log(response.status);
+                setSongs([]);
+            }
+        })();
+    }, [limit]);
 
     const onChangeLimit = (e: any) => {
         setLimit(e);
@@ -26,6 +54,31 @@ const Home = (props:any) => {
     const onPageChange = (data: any) => {
         const page = data.selected + 1;
         setCurrentPage(page);
+        (async () => {
+            const response = await fetch(`${API_URL}/song?page=${page}&limit=${limit}`, {
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                setSongs(data.data);
+            } else {
+                setSongs([]);
+            }
+        }
+        )();
+    }
+
+    const playSong = (id: number, title: string) => {
+        props.setSongName(title);
+        props.setSongId(id);
+        props.setShowSongController(true);
+    }
+
+    const editSong = (id: number, title: string) => {
+        props.setOldSongTitle(title);
+        navigate(`/song/edit/${id}`);
     }
     
     return (
@@ -34,7 +87,7 @@ const Home = (props:any) => {
                 Your Song
             </div>
             {
-                Array.isArray(array) && array.length > 0 ? (
+                Array.isArray(songs) && songs.length > 0 ? (
                     <div className="container">
                         <div className="clearfix d-flex justify-content-end gap-4">
                             <div className="align-self-center m-0 p-0">
@@ -66,19 +119,20 @@ const Home = (props:any) => {
                             </thead>
                             <tbody>
                             {
-                                Array.isArray(array) ? array.map((item:any) => {
+                                Array.isArray(songs) ? songs.map((item:any, index) => {
+                                    console.log(item)
                                     return (
-                                            <tr className="content-entry" key={item.id}>
-                                                <td className='text-center col-md-1'>{item.id}</td>
-                                                <td className='text-center col-md-4'>{item.name}</td>
-                                                <td className='text-center col-md-4'>{item.name}</td>
-                                                <td className='text-center col-md-3'>
+                                            <tr className="content-entry" key={item.song_id}>
+                                                <td className='text-center col-md-1'>{parseInt(limit)*(currentPage-1)+index+1}</td>
+                                                <td className='text-center col-md-4 fw-normal'>{item.Judul}</td>
+                                                <td className='text-center col-md-3 fw-normal'>{moment(item.createdAt).fromNow()}</td>
+                                                <td className='text-center col-md-4'>
                                                     <div className="btn-group">
-                                                        <button className="btn btn-primary">
+                                                        <button className="btn btn-primary" onClick={()=>{playSong(item.song_id, item.Judul)}}>
                                                             <FontAwesomeIcon icon="play" />
                                                             <span className="action-name"> Play </span>
                                                         </button>
-                                                        <button className="btn btn-secondary">
+                                                        <button className="btn btn-secondary" onClick={()=>{editSong(item.song_id, item.Judul)}}>
                                                             <FontAwesomeIcon icon="edit" />
                                                             <span className="action-name"> Edit </span>
                                                         </button>

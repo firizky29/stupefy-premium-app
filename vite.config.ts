@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 import svgrPlugin from 'vite-plugin-svgr';
+import EnvironmentPlugin from 'vite-plugin-environment'
 import path from "path"
 
 // https://vitejs.dev/config/
@@ -25,7 +26,7 @@ export default defineConfig({
 			usePolling: true
 		}
 	},
-	plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
+	plugins: [react(), viteTsconfigPaths(), svgrPlugin(), EnvironmentPlugin('all')],
 });
 
 

@@ -1,19 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import ReactAudioPlayer from 'react-audio-player';
+import { API_URL } from '../config';
 
 const SongController = (props: any) => {
-    if(!props.show){
+    // console.log(!props.songId)
+    if(props.showSongController){
         return (
             <div className="song-controller">
                 <div className="song-info">
-                    <p className="song-title">Terluka Bangetttttttttttttt</p>
+                    <p className="song-title">{props.songName}</p>
                     <p className="song-artist">DeeGeeDow</p>
                 </div>
-                <audio id="song-controller-content" controls >
-                    <source type="audio/mp3" id="home_src_mp3" src={props.song} />
-                    <source type="audio/ogg" id="home_src_ogg" src={props.song} />
-                    Your browser does not support the audio element.
-                </audio>
+                <ReactAudioPlayer
+                    src={API_URL + '/song/' + props.songId}
+                    controls
+                    autoPlay
+                />
             </div>
         )
     } else{

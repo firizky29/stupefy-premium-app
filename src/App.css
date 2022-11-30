@@ -76,6 +76,7 @@ nav{
   position: fixed;
   top: 0;
   width: 75%;
+  z-index: 1;
 }
 
 
@@ -364,7 +365,6 @@ a .sidebar-icon{
 } */
 
 .page-item.active .page-link {
-  z-index: 3;
   color: #fff !important;
   background-color: #1DB954 !important;
   font-family: 'Inter' !important;
@@ -374,7 +374,6 @@ a .sidebar-icon{
 }
 
 .page-item .page-link {
-  z-index: 3;
   color: white !important;
   border: none;
   border-radius: 5px;
@@ -387,7 +386,6 @@ a .sidebar-icon{
 }
 
 .page-item .page-link:hover {
-  z-index: 3;
   background-color: #1DB954 !important;
 }
 
@@ -519,6 +517,27 @@ a .sidebar-icon{
     display: none;
   }
 }
+
+.alert{
+  z-index: 1000 !important;
+  position: absolute !important;
+  top: 5px !important;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  width: 90% !important;
+
+  height: 80px !important;
+  vertical-align: center;
+  padding: 10px;
+
+  font-family: 'Inter' !important;
+  font-style: normal;
+
+}
+
+
 
 
 
