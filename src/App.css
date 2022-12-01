@@ -520,7 +520,7 @@ a .sidebar-icon{
 
 .alert{
   z-index: 1000 !important;
-  position: absolute !important;
+  position: fixed !important;
   top: 5px !important;
   margin-left: auto;
   margin-right: auto;

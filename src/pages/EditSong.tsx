@@ -77,6 +77,7 @@ const EditSong = (props: any) => {
                 fileReader.onload = (e) => {
                     setSong(e.target?.result);
                     setUseOldSong(false);
+                    setErrors({ ...errors, audio: '' });
                 }
                 
                 fileReader.onerror = (error) => {

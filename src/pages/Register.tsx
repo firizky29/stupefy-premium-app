@@ -1,6 +1,8 @@
 import React, { SyntheticEvent, useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import '../assets/css/authform.css'
+import '../assets/css/form.css';
+import { API_URL } from '../config';
 // import { API_URL } from '../config';
 // import { Navigate, useNavigate } from 'react-router-dom';
 
@@ -10,40 +12,138 @@ const Register = (props: any) => {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [errors, setErrors] = useState({
-        credential: '',
-        message: ''
+        name: '',
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
     });
-    const [state, setState] = useState({
-        validName: true,
-        validUsername: true,
-        validEmail: true,
-        validPassword: true,
-        validConfirmPassword: true,
-    })
-    // const navigate = useNavigate();
+
+    const navigate = useNavigate();
+
+    function checkName(name : string) {
+        if(name.length === 0){
+            setErrors({
+                ...errors,
+                name: 'Name is required'
+            });            
+        } else{
+            setErrors({
+                ...errors,
+                name: ''
+            });
+        }
+    }
+    
+    
+    function checkUsername(username : string) {
+        const regex : RegExp = /^[a-zA-Z0-9_]+$/;
+        if(username.length < 6){
+            setErrors({
+                ...errors,
+                username: 'Username must be at least 6 characters long'
+            });
+        } else if(!regex.test(username)){
+            setErrors({
+                ...errors,
+                username: 'Username must contain only letters, numbers and underscores'
+            });
+        } else{
+            setErrors({
+                ...errors,
+                username: ''
+            });
+        }
+    }
+    function checkEmail(email : string) {
+        const regex : RegExp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        if(regex.test(email)){
+            setErrors({
+                ...errors,
+                email: ''
+            });
+        }else{
+            setErrors({
+                ...errors,
+                email: 'Email is not valid'
+            });
+        }
+    }
+    
+    function checkPassword(password : string) {
+        const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+        if(password.length < 8){
+            setErrors({
+                ...errors,
+                password: 'Password must be at least 8 characters long'
+            });
+        } else if(!regex.test(password)){
+            setErrors({
+                ...errors,
+                password: 'Password must contain at least one letter, one number and one special character'
+            });
+        }
+        else{
+            setErrors({
+                ...errors,
+                password: ''
+            });
+        }
+    }
+    
+    function checkConfirmPassword(password : string, confirmPassword : string){
+        if(password !== confirmPassword){
+            setErrors({
+                ...errors,
+                confirmPassword: 'Passwords do not match'
+            });
+        } else{
+            setErrors({
+                ...errors,
+                confirmPassword: ''
+            });
+        }
+    }
+    
 
 
     const submit = async (e: SyntheticEvent) => {
-        // e.preventDefault();
-        // const res = await fetch(`${API_URL}/auth/login`, {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     credentials: 'include',
-        //     body: JSON.stringify({
-        //         username,
-        //         password
-        //     })
-        // });
-        // if (res.status === 200) {
-        //     const data = await res.json();
-        //     props.setIsLoggedIn(true);
-        //     navigate('/');
-        // } else {
-        //     const data = await res.json();
-        //     setErrors({ ...errors, ...data });
-        // }
+        e.preventDefault();
+        const res = await fetch(`${API_URL}/auth/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                name,
+                username,
+                password,
+                email
+            })
+        });
+        if (res.status === 200) {
+            const data = await res.json();
+
+            props.setAlert({ type: 'success', message: data.message });
+            props.setShowAlert(true);
+            props.setIsLoggedIn(true);
+            navigate('/');
+        } else if(res.status === 500){
+            const data = await res.json();
+            props.setAlert({
+                type: 'Error',
+                message: data.message
+            });
+            props.setShowAlert(true);
+        } else {
+            const data = await res.json();
+            setErrors({ ...errors, ...data });
+        }
+    }
+    
+    if(props.isLoggedIn){
+        navigate('/');
     }
     
     return (
@@ -59,17 +159,11 @@ const Register = (props: any) => {
                             placeholder="Enter your name"
                             required
                             onChange={e => {
-                                setState({...state, validName: checkName(e.target.value)});
+                                checkName(e.target.value);
                                 setName(e.target.value);
                             }}
                         />
-                        {
-                            (!state.validName) 
-                        ?
-                            <label className="text-danger">Nama tidak boleh kosong</label>
-                        :
-                            <></>
-                        }
+                        <div className="text-danger">{errors.name}</div>
                     </div>
                     <div className="mb-3">
                         <label>Email</label>
@@ -79,37 +173,25 @@ const Register = (props: any) => {
                             placeholder="Enter your email"
                             required
                             onChange={e => {
-                                setState({...state, validEmail: checkEmail(e.target.value)});
+                                checkEmail(e.target.value);
                                 setEmail(e.target.value);
                             }}
                         />
-                        {
-                            (!state.validEmail) 
-                        ?
-                            <label className="text-danger">Email tidak valid</label>
-                        :
-                            <></>
-                        }
+                        <div className="text-danger">{errors.email}</div>
                     </div>
                     <div className="mb-3">
                         <label>Username</label>
                         <input
                             type="text"
                             className="form-control bg-dark text-bg-dark"
-                            placeholder="Enter username"
+                            placeholder="Enter your username"
                             required
                             onChange={e => {
-                                setState({...state, validUsername: checkUsername(e.target.value)});
+                                checkUsername(e.target.value);
                                 setUsername(e.target.value);
                             }}
                         />
-                        {
-                            (!state.validUsername) 
-                        ?
-                            <label className="text-danger">Username tidak valid</label>
-                        :
-                            <></>
-                        }
+                        <div className="text-danger">{errors.username}</div>
                     </div>
                     <div className="mb-3">
                         <label>Password</label>
@@ -119,36 +201,25 @@ const Register = (props: any) => {
                             placeholder="Enter password"
                             required
                             onChange={e => {
-                                setState({...state, validPassword: checkPassword(e.target.value)});
+                                checkPassword(e.target.value);
                                 setPassword(e.target.value);
                             }}
                         />
-                        {
-                            (!state.validPassword) 
-                        ?
-                            <label className="text-danger">Password tidak boleh kosong</label>
-                        :
-                            <></>
-                        }
+                        <div className="text-danger">{errors.password}</div>
                     </div>
                     <div className="mb-3">
-                        <label>Password</label>
+                        <label>Confirm Password</label>
                         <input
                             type="password"
                             className="form-control bg-dark text-bg-dark"
-                            placeholder="Enter password"
+                            placeholder="Confirm your password"
                             required
-                            onChange={e => setState({...state, validConfirmPassword: checkConfrimPassword(password, e.target.value)})}
+                            onChange={e => {
+                                checkConfirmPassword(password, e.target.value);
+                            }}
                         />
-                        {
-                            (!state.validConfirmPassword) 
-                        ?
-                            <label className="text-danger">Password tidak sesuai</label>
-                        :
-                            <></>
-                        }
+                        <div className="text-danger">{errors.confirmPassword}</div>
                     </div>
-                    <div className="text-danger mb-3">{errors.credential}</div>
                     <div className="d-grid">
                         <button type="submit" className="btn btn-success" onClick={submit}>
                             Sign up
@@ -161,30 +232,5 @@ const Register = (props: any) => {
     );
 }
 
-function checkName(name : string) : boolean {
-    return name.length > 0;
-}
-
-function checkUsername(username : string) : boolean {
-    const regex : RegExp = /^[a-zA-Z0-9_]+$/;
-    return regex.test(username);
-}
-function checkEmail(email : string) : boolean {
-    const regex : RegExp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if(regex.test(email)){
-
-        return true;
-    }else{
-        return false;
-    }
-}
-
-function checkPassword(password : string) : boolean {
-    return password.length>0;
-}
-
-function checkConfrimPassword(password : string, confirmPassword : string) : boolean {
-    return password === confirmPassword;
-}
 
 export default Register;

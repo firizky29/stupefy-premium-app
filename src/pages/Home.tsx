@@ -22,7 +22,7 @@ const Home = (props: any) => {
 
     const [songs, setSongs] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
-    const [limit, setLimit] = useState("10");
+    const [limit, setLimit] = useState("2");
     const [currentPage, setCurrentPage] = useState(1);
 
     const [toBeDeleted, setToBeDeleted] = useState({
@@ -103,6 +103,9 @@ const Home = (props: any) => {
     }
 
     const confirmedDelete = async () => {
+        if(toBeDeleted.id == props.songId){
+            props.setShowSongController(false);
+        }
         const response = await fetch(`${API_URL}/song/${toBeDeleted.id}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },

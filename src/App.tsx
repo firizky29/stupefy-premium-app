@@ -39,7 +39,7 @@ function App() {
 		role: ''
 	})
 
-	const [isLoggedIn, setIsLoggedIn] = useState(true)
+	const [isLoggedIn, setIsLoggedIn] = useState(false)
 
 
 	// const props = {
@@ -73,6 +73,7 @@ function App() {
 
 	const registerProps = {
 		...generalProps,
+		setIsLoggedIn,
 		setAlert
 	}
 
@@ -81,7 +82,8 @@ function App() {
 		setSongId,
 		setAlert,
 		setOldSongTitle,
-		setSongName
+		setSongName,
+		songId
 	}
 
 	const addSongProps = {

@@ -9,6 +9,11 @@ const Alerts = (props: any) => {
             message: ''
         });
     }
+
+    setTimeout(() => {
+        props.setShowAlert(false);
+    }, 3000);
+
     return (
         <div className="alert">
             {props.showAlert && props.alert.type === 'success' && (

@@ -83,6 +83,7 @@ const AddSong = (props: any) => {
                 setAudioName(files[0].name);
                 fileReader.onload = (e) => {
                     setSong(e.target?.result);
+                    setErrors({ ...errors, audio: '' });
                     audio.load();
                 }
                 
@@ -140,7 +141,7 @@ const AddSong = (props: any) => {
                     <div className="field-with-icon">
                         <img src={AddSongIcon} alt="Add Song Icon" />
                         <div className="file-uploader">
-                            <input type="text" name="song-path" id="song-path" placeholder={audioName} disabled required />
+                            <input type="text" name="song-path" id="song-path" placeholder={audioName} disabled />
                             <div className="upload-button" onClick={getSong}>Select File</div>
                         </div>
                         <input type="file" name="file" id="file"
