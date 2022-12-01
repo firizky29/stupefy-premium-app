@@ -5,10 +5,19 @@ import React, { SyntheticEvent, useState } from 'react';
 const Register = (props: any) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
     const [errors, setErrors] = useState({
         credential: '',
         message: ''
     });
+    const [state, setState] = useState({
+        validName: true,
+        validUsername: true,
+        validEmail: true,
+        validPassword: true,
+        validConfirmPassword: true,
+    })
     // const navigate = useNavigate();
 
 
@@ -41,24 +50,101 @@ const Register = (props: any) => {
                 <form onSubmit={submit}>
                     <h3>Register to Stupefy Premium App</h3>
                     <div className="mb-3">
+                        <label>Name</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter your name"
+                            required
+                            onChange={e => {
+                                setState({...state, validName: checkName(e.target.value)});
+                                setName(e.target.value);
+                            }}
+                        />
+                        {
+                            (!state.validName) 
+                        ?
+                            <label className="text-danger">Nama tidak boleh kosong</label>
+                        :
+                            <></>
+                        }
+                    </div>
+                    <div className="mb-3">
+                        <label>Email</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter your email"
+                            required
+                            onChange={e => {
+                                setState({...state, validEmail: checkEmail(e.target.value)});
+                                setEmail(e.target.value);
+                            }}
+                        />
+                        {
+                            (!state.validEmail) 
+                        ?
+                            <label className="text-danger">Email tidak valid</label>
+                        :
+                            <></>
+                        }
+                    </div>
+                    <div className="mb-3">
                         <label>Username</label>
                         <input
                             type="text"
                             className="form-control"
-                            placeholder="Enter username"
+                            placeholder="Enter your username"
                             required
-                            onChange={e => setUsername(e.target.value)}
+                            onChange={e => {
+                                setState({...state, validUsername: checkUsername(e.target.value)});
+                                setUsername(e.target.value);
+                            }}
                         />
+                        {
+                            (!state.validUsername) 
+                        ?
+                            <label className="text-danger">Username tidak valid</label>
+                        :
+                            <></>
+                        }
                     </div>
                     <div className="mb-3">
                         <label>Password</label>
                         <input
                             type="password"
                             className="form-control"
-                            placeholder="Enter password"
+                            placeholder="Enter your password"
                             required
-                            onChange={e => setPassword(e.target.value)}
+                            onChange={e => {
+                                setState({...state, validPassword: checkPassword(e.target.value)});
+                                setPassword(e.target.value)
+                            }}
                         />
+                        {
+                            (!state.validPassword) 
+                        ?
+                            <label className="text-danger">Password tidak boleh kosong</label>
+                        :
+                            <></>
+                        }
+                    </div>
+                    <div className="mb-3">
+                        <label>Confirm Password</label>
+                        <input
+                            type="password"
+                            className="form-control"
+                            placeholder="Confirm your password"
+                            required
+                            onChange={e => setState({...state, validConfirmPassword: checkConfrimPassword(password, e.target.value)})}
+                        />
+                        {
+                            (!state.validConfirmPassword) 
+                        ?
+                            <label className="text-danger">Password tidak sesuai</label>
+                        :
+                            <></>
+                        }
                     </div>
                     <div className="text-danger mb-3">{errors.credential}</div>
                     <div className="d-grid">
@@ -73,6 +159,30 @@ const Register = (props: any) => {
     );
 }
 
-// };
+function checkName(name : string) : boolean {
+    return name.length > 0;
+}
+
+function checkUsername(username : string) : boolean {
+    const regex : RegExp = /^[a-zA-Z0-9_]+$/;
+    return regex.test(username);
+}
+function checkEmail(email : string) : boolean {
+    const regex : RegExp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if(regex.test(email)){
+
+        return true;
+    }else{
+        return false;
+    }
+}
+
+function checkPassword(password : string) : boolean {
+    return password.length>0;
+}
+
+function checkConfrimPassword(password : string, confirmPassword : string) : boolean {
+    return password === confirmPassword;
+}
 
 export default Register;

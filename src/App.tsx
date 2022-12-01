@@ -153,7 +153,7 @@ function App() {
 	// 	)();
 	// }, [isLoggedIn]);
 
-	if(isLoggedIn){
+	if(!isLoggedIn){
 		return(
 			<Router>
 				<div className="App">
