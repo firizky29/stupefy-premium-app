@@ -1,4 +1,6 @@
 import React, { SyntheticEvent, useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import '../assets/css/authform.css'
 // import { API_URL } from '../config';
 // import { Navigate, useNavigate } from 'react-router-dom';
 
@@ -46,9 +48,9 @@ const Register = (props: any) => {
     
     return (
         <div className="h-100 auth-wrapper pd-10 d-flex justify-content-center align-items-center">
-            <div className="auth-inner mb-4 mt-3 card py-3 px-3">
+            <div className="auth-inner bg-dark text-bg-dark mb-4 mt-3 card py-3 px-3">
                 <form onSubmit={submit}>
-                    <h3>Register to Stupefy Premium App</h3>
+                    <h3>Sign Up to Stupefy Premium App</h3>
                     <div className="mb-3">
                         <label>Name</label>
                         <input
@@ -93,8 +95,8 @@ const Register = (props: any) => {
                         <label>Username</label>
                         <input
                             type="text"
-                            className="form-control"
-                            placeholder="Enter your username"
+                            className="form-control bg-dark text-bg-dark"
+                            placeholder="Enter username"
                             required
                             onChange={e => {
                                 setState({...state, validUsername: checkUsername(e.target.value)});
@@ -113,28 +115,8 @@ const Register = (props: any) => {
                         <label>Password</label>
                         <input
                             type="password"
-                            className="form-control"
-                            placeholder="Enter your password"
-                            required
-                            onChange={e => {
-                                setState({...state, validPassword: checkPassword(e.target.value)});
-                                setPassword(e.target.value)
-                            }}
-                        />
-                        {
-                            (!state.validPassword) 
-                        ?
-                            <label className="text-danger">Password tidak boleh kosong</label>
-                        :
-                            <></>
-                        }
-                    </div>
-                    <div className="mb-3">
-                        <label>Confirm Password</label>
-                        <input
-                            type="password"
-                            className="form-control"
-                            placeholder="Confirm your password"
+                            className="form-control bg-dark text-bg-dark"
+                            placeholder="Enter password"
                             required
                             onChange={e => setState({...state, validConfirmPassword: checkConfrimPassword(password, e.target.value)})}
                         />
@@ -148,12 +130,12 @@ const Register = (props: any) => {
                     </div>
                     <div className="text-danger mb-3">{errors.credential}</div>
                     <div className="d-grid">
-                        <button type="submit" className="btn btn-primary" onClick={submit}>
-                            Register
+                        <button type="submit" className="btn btn-success" onClick={submit}>
+                            Sign up
                         </button>
                     </div>
                 </form>
-                <div className="text-center">Sudah punya akun premium? <a href="/login">Masuk</a>!</div>
+                <div className="text-center">Already have an account? <NavLink to="/login">Sign in</NavLink></div>
             </div>
         </div>
     );
