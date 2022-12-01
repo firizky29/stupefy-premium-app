@@ -163,6 +163,7 @@ function App() {
 					<Routes>
 						<Route path="/login" element={<Login {...loginProps} />} />
 						<Route path="/register" element={<Register {...registerProps} />} />
+						<Route path="*" element={<Login {...loginProps} />} />
 					</Routes>
 				</div>
 			</Router>

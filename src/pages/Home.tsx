@@ -154,7 +154,9 @@ const Home = (props: any) => {
 
 
        
-
+    if(!props.isLoggedIn){
+        navigate('/login');
+    }
     return (
         <div className='content'>
             <div className="container-title">
