@@ -22,7 +22,7 @@ const Home = (props: any) => {
 
     const [songs, setSongs] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
-    const [limit, setLimit] = useState("2");
+    const [limit, setLimit] = useState("10");
     const [currentPage, setCurrentPage] = useState(1);
 
     const [toBeDeleted, setToBeDeleted] = useState({
