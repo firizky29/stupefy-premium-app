@@ -55,7 +55,7 @@ const Register = (props: any) => {
                         <label>Name</label>
                         <input
                             type="text"
-                            className="form-control"
+                            className="form-control bg-dark text-bg-dark"
                             placeholder="Enter your name"
                             required
                             onChange={e => {
@@ -75,7 +75,7 @@ const Register = (props: any) => {
                         <label>Email</label>
                         <input
                             type="text"
-                            className="form-control"
+                            className="form-control bg-dark text-bg-dark"
                             placeholder="Enter your email"
                             required
                             onChange={e => {
@@ -107,6 +107,26 @@ const Register = (props: any) => {
                             (!state.validUsername) 
                         ?
                             <label className="text-danger">Username tidak valid</label>
+                        :
+                            <></>
+                        }
+                    </div>
+                    <div className="mb-3">
+                        <label>Password</label>
+                        <input
+                            type="password"
+                            className="form-control bg-dark text-bg-dark"
+                            placeholder="Enter password"
+                            required
+                            onChange={e => {
+                                setState({...state, validPassword: checkPassword(e.target.value)});
+                                setPassword(e.target.value);
+                            }}
+                        />
+                        {
+                            (!state.validPassword) 
+                        ?
+                            <label className="text-danger">Password tidak boleh kosong</label>
                         :
                             <></>
                         }
