@@ -10,7 +10,7 @@ const SongController = (props: any) => {
             <div className="song-controller">
                 <div className="song-info">
                     <p className="song-title">{props.songName}</p>
-                    <p className="song-artist">DeeGeeDow</p>
+                    <p className="song-artist">{props.user.name}</p>
                 </div>
                 <ReactAudioPlayer
                     src={API_URL + '/song/' + props.songId}

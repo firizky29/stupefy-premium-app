@@ -22,7 +22,7 @@ const Home = (props: any) => {
 
     const [songs, setSongs] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
-    const [limit, setLimit] = useState("2");
+    const [limit, setLimit] = useState("10");
     const [currentPage, setCurrentPage] = useState(1);
 
     const [toBeDeleted, setToBeDeleted] = useState({
@@ -112,11 +112,11 @@ const Home = (props: any) => {
         if (response.status === 200) {
             setShow(false);
 
-            props.setShowAlert(true);
             props.setAlert({
                 type: 'success',
                 message: 'Song deleted successfully'
             });
+            props.setShowAlert(true);
 
             (async () => {
                 const response = await fetch(`${API_URL}/song?page=${currentPage}&limit=${limit}`, {
@@ -140,11 +140,12 @@ const Home = (props: any) => {
             }
             )();
         } else {
-            props.setShowAlert(true);
+            setShow(false);
             props.setAlert({
                 type: 'danger',
                 message: response.statusText
             });
+            props.setShowAlert(true);
         }
     }
 

@@ -1,4 +1,7 @@
 import React, { SyntheticEvent, useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import '../assets/css/authform.css'
+
 // import { API_URL } from '../config';
 // import { Navigate, useNavigate } from 'react-router-dom';
 
@@ -41,14 +44,14 @@ const Login = (props: any) => {
     // else {
         return (
             <div className="h-100 auth-wrapper pd-10 d-flex justify-content-center align-items-center">
-                <div className="auth-inner mb-4 mt-3 card py-3 px-3">
+                <div className="auth-inner bg-dark text-bg-dark mb-4 mt-3 card py-3 px-3">
                     <form onSubmit={submit}>
-                        <h3>Login to Stupefy Premium App</h3>
+                        <h3>Sign In to Stupefy Premium App</h3>
                         <div className="mb-3">
                             <label>Username</label>
                             <input
                                 type="text"
-                                className="form-control"
+                                className="form-control bg-dark text-bg-dark"
                                 placeholder="Enter username"
                                 required
                                 onChange={e => setUsername(e.target.value)}
@@ -58,7 +61,7 @@ const Login = (props: any) => {
                             <label>Password</label>
                             <input
                                 type="password"
-                                className="form-control"
+                                className="form-control bg-dark text-bg-dark"
                                 placeholder="Enter password"
                                 required
                                 onChange={e => setPassword(e.target.value)}
@@ -66,12 +69,12 @@ const Login = (props: any) => {
                         </div>
                         <div className="text-danger mb-3">{errors.credential}</div>
                         <div className="d-grid">
-                            <button type="submit" className="btn btn-primary" onClick={submit}>
-                                Login
+                            <button type="submit" className="btn btn-success" onClick={submit}>
+                                Sign in
                             </button>
                         </div>
                     </form>
-                    <div className="text-center">Belum punya akun premium? <a href="/register">Buat akun premium</a>!</div>
+                    <div className="text-center">Don't have an account? <NavLink to="/register">Sign up</NavLink></div>
                 </div>
             </div>
         );

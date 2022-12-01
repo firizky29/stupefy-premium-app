@@ -14,6 +14,7 @@ import Register from './pages/Register'
 import Home from './pages/Home'
 import AddSong from './pages/AddSong'
 import EditSong from './pages/EditSong' 
+import { API_URL } from './config'
 
 
 function App() {
@@ -35,10 +36,10 @@ function App() {
 
 	const [user, setUser] = useState({
 		name: '',
-		is_admin: false
+		role: ''
 	})
 
-	const [isLoggedIn, setIsLoggedIn] = useState(false)
+	const [isLoggedIn, setIsLoggedIn] = useState(true)
 
 
 	// const props = {
@@ -127,36 +128,36 @@ function App() {
 
 
 
-	// useEffect(() => {
-	// 	(async () => {
-	// 		const response = await fetch(`${API_URL}/auth/profile`, {
-	// 			headers: { 'Content-Type': 'application/json' },
-	// 			credentials: 'include',
-	// 		});
+	useEffect(() => {
+		(async () => {
+			const response = await fetch(`${API_URL}/auth/`, {
+				headers: { 'Content-Type': 'application/json' },
+				credentials: 'include',
+			});
 
-	// 		if (response.status === 200) {
-	// 			const data = await response.json();
-	// 			setUser(preValue => { return { ...preValue, ...data } })
-	// 			setIsLoggedIn(true)
-	// 		} else {
-	// 			setUser(preValue => {
-	// 				return {
-	// 					...preValue, id: '',
-	// 					name: '',
-	// 					username: '',
-	// 					is_admin: false
-	// 				}
-	// 			})
-	// 			setIsLoggedIn(false)
-	// 		}
-	// 	}
-	// 	)();
-	// }, [isLoggedIn]);
+			if (response.status === 200) {
+				const data = await response.json();
+				setUser(preValue => { return { ...preValue, role: data.role, name:data.name} })
+				setIsLoggedIn(true)
+			} else {
+				setUser(preValue => {
+					return {
+						...preValue,
+						role: '',
+						name: ''
+					}
+				})
+				setIsLoggedIn(false)
+			}
+		}
+		)();
+	}, [isLoggedIn]);
 
-	if(isLoggedIn){
+	if(!isLoggedIn){
 		return(
 			<Router>
 				<div className="App">
+					<Alerts {...alertProps} />
 					<Routes>
 						<Route path="/login" element={<Login {...loginProps} />} />
 						<Route path="/register" element={<Register {...registerProps} />} />
