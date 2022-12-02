@@ -9,10 +9,10 @@ import { API_URL } from '../config';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faPlay, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 
-library.add(faPlay, faTrash, faEdit);
+library.add(faCheck, faTimes);
 
 // const array = [{id: 1, name: 'song1'}, {id: 2, name: 'song2'}, {id: 3, name: 'song3'}];
 // const array: any[] =  [];
@@ -42,15 +42,21 @@ const DashboardAdmin= (props: any) => {
             });
 
             if (response.status === 200) {
-                const data = await response.json();
-                const xmldata = data.data;
-                console.log(data);
-                setSubscriptions(data.data);
-                setTotalPages(data.total_page);
-                if(currentPage > data.total_page) {
-                    setCurrentPage(data.total_page);
+                const res = await response.json();
+                console.log(res);
+                let total_page = 0;
+                if(res.totalData.RequestsResponse.data) {
+                    total_page = Math.ceil(res.totalData.RequestsResponse.data.length/parseInt(limit));
                 }
-                
+                const data = res.data.RequestsResponse.data;
+                setSubscriptions(data);
+                setTotalPages(total_page);
+                if(currentPage > total_page) {
+                    setCurrentPage(total_page);
+                }
+                console.log(data);
+                console.log(currentPage);
+                console.log(total_page);
             } else {
                 console.log(response);
                 console.log(response.status);
@@ -74,7 +80,7 @@ const DashboardAdmin= (props: any) => {
 
             if (response.status === 200) {
                 const data = await response.json();
-                setSubscriptions(data.data);
+                setSubscriptions(data.data.RequestsResponse.data);
             } else {
                 setSubscriptions([]);
             }
@@ -82,76 +88,60 @@ const DashboardAdmin= (props: any) => {
         )();
     }
 
-    const playSong = (id: number, title: string) => {
-        props.setSongName(title);
-        props.setSongId(id);
-        props.setShowSongController(true);
-    }
-
-    const editSong = (id: number, title: string) => {
-        props.setOldSongTitle(title);
-        navigate(`/song/edit/${id}`);
-    }
-
-    const deleteSong = (id: number, title: string) => {
-        setShow(true);
-        setToBeDeleted({    
-            id: id,
-            name: title
-        });
-    }
-
-    const confirmedDelete = async () => {
-        if(toBeDeleted.id == props.songId){
-            props.setShowSongController(false);
-        }
-        const response = await fetch(`${API_URL}/song/${toBeDeleted.id}`, {
-            method: 'DELETE',
+    const respondReq = async (creator_id: number, subscriber:number, isAccepted: boolean) => {
+        console.log(JSON.stringify({creator_id, subscriber, isAccepted}));
+        const response = await fetch(`${API_URL}/subscription-request/respond`, {
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
+            body: JSON.stringify({creator_id, subscriber, isAccepted})
         });
 
         if (response.status === 200) {
-            setShow(false);
-
-            props.setAlert({
-                type: 'success',
-                message: 'Song deleted successfully'
-            });
-            props.setShowAlert(true);
-
+            const data = await response.json();
+            console.log(data);
             (async () => {
                 const response = await fetch(`${API_URL}/subscription-request?page=${currentPage}&limit=${limit}`, {
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
                 });
-
+    
                 if (response.status === 200) {
-                    const data = await response.json();
-                    setSubscriptions(data.data);
-                    setTotalPages(data.total_page);
-                    
-                    if(currentPage > 1 && data.data.length === 0){
-                        setCurrentPage(currentPage - 1);
+                    const res = await response.json();
+                    console.log(res);
+                    console.log(res.totalData);
+                    let total_page = 0;
+                    if(res.totalData.RequestsResponse.data) {
+                        total_page = Math.ceil(res.totalData.RequestsResponse.data.length/parseInt(limit));
                     }
+                    const data = res.data.RequestsResponse.data;
+                    setSubscriptions(data);
+                    setTotalPages(total_page);
+                    console.log(data);
+                    if(total_page==0) {
+                        total_page = 0;
+                        setTotalPages(total_page);
+                    }
+                    if(currentPage > 1 && ((data && data.length === 0) || !data)) {
+                        if(currentPage-1 > total_page) {
+                            setCurrentPage(total_page);
+                        } else {
+                            setCurrentPage(currentPage - 1);
+                        }
+                    }
+                    
                 } else {
+                    console.log(response);
+                    console.log(response.status);
                     setSubscriptions([]);
-                    setCurrentPage(0);
-                    setTotalPages(0);
+                    // setCurrentPage(0);
+                    // setTotalPages(0);
                 }
-            }
-            )();
+            })();            
         } else {
-            setShow(false);
-            props.setAlert({
-                type: 'danger',
-                message: response.statusText
-            });
-            props.setShowAlert(true);
+            console.log(response);
         }
-    }
-
-
+    } 
        
     if(!props.isLoggedIn){
         navigate('/login');
@@ -164,20 +154,6 @@ const DashboardAdmin= (props: any) => {
             {
                 Array.isArray(subscriptions) && subscriptions.length > 0 ? (
                     <div className="container">
-                        <Modal show={show} onHide={handleClose}>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Delete Confirmation</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>Are you sure you want to delete {toBeDeleted.name}?</Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="secondary" onClick={handleClose}>
-                                    Close
-                                </Button>
-                                <Button variant="danger" onClick={confirmedDelete}>
-                                    Delete
-                                </Button>
-                            </Modal.Footer>
-                        </Modal>
                         <div className="clearfix d-flex justify-content-end gap-4">
                             <div className="align-self-center m-0 p-0">
                                 <p className="font-weight-light m-0 mr-2 text-light">Rows per page: </p>
@@ -211,23 +187,19 @@ const DashboardAdmin= (props: any) => {
                                     Array.isArray(subscriptions) ? subscriptions.map((item: any, index) => {
                                         console.log(item)
                                         return (
-                                            <tr className="content-entry" key={item.song_id}>
+                                            <tr className="content-entry" key={index}>
                                                 <td className='text-center col-md-1'>{parseInt(limit) * (currentPage - 1) + index + 1}</td>
-                                                <td className='text-center col-md-4 fw-normal'>{item.Judul}</td>
-                                                <td className='text-center col-md-3 fw-normal'>{moment(item.createdAt).fromNow()}</td>
+                                                <td className='text-center col-md-4 fw-normal'>{item.creator_id}</td>
+                                                <td className='text-center col-md-3 fw-normal'>{item.subscriber}</td>
                                                 <td className='text-center col-md-4'>
                                                     <div className="btn-group">
-                                                        <button className="btn btn-primary" onClick={() => { playSong(item.song_id, item.Judul) }}>
-                                                            <FontAwesomeIcon icon="play" />
-                                                            <span className="action-name"> Play </span>
-                                                        </button>
-                                                        <button className="btn btn-secondary" onClick={() => { editSong(item.song_id, item.Judul) }}>
-                                                            <FontAwesomeIcon icon="edit" />
-                                                            <span className="action-name"> Edit </span>
+                                                        <button className="btn btn-primary" onClick={() => { respondReq(item.creator_id, item.subscriber, true) }}>
+                                                            <FontAwesomeIcon icon="check" />
+                                                            <span className="action-name"> Accept </span>
                                                         </button>
                                                         <button className="btn btn-danger">
-                                                            <FontAwesomeIcon icon="trash" />
-                                                            <span className="action-name" onClick={() => { deleteSong(item.song_id, item.Judul )}}> Delete </span>
+                                                            <FontAwesomeIcon icon="times" />
+                                                            <span className="action-name" onClick={() => { respondReq(item.creator_id, item.subscriber, false )}}> Reject </span>
                                                         </button>
                                                     </div>
                                                 </td>
@@ -267,7 +239,7 @@ const DashboardAdmin= (props: any) => {
                         <table className="contents">
                             <tbody>
                                 <tr>
-                                    <td>You dont have song yet </td>
+                                    <td>You dont have pending request </td>
                                 </tr>
                             </tbody>
                         </table>
