@@ -1,11 +1,13 @@
 # Stupefy Premium App
 
+# Quick Start
+
 1. build: ```docker-compose build```
 2. up: ```docker-compose up -d```
 3. up production: ```docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build```
 4. down: ```docker-compose down```
-
-# Stupefy
+   
+   
 ## Tugas Besar 2 - IF3110 Pengembangan Perangkat Lunak Berbasis Web<br>
 Pengembangan aplikasi berbasis web dengan arsitektur *microservice*
 
