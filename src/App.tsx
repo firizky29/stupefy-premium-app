@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
+import AdminSidebar from './components/Sidebar'
 import SongController from './components/SongController'
 import Alerts from './components/Alerts'
 
@@ -14,6 +15,7 @@ import Register from './pages/Register'
 import Home from './pages/Home'
 import AddSong from './pages/AddSong'
 import EditSong from './pages/EditSong' 
+import DashboardAdmin from './pages/DashboardAdmin' 
 import { API_URL } from './config'
 
 
@@ -169,7 +171,7 @@ function App() {
 			</Router>
 		)
 	}
-	else{
+	else if(user.role !== 'admin'){
 		return (
 			<Router>
 				<div className="App">
@@ -183,23 +185,28 @@ function App() {
 									<Route path="edit/:id" element={<EditSong {...editSongProps} />} />
 								</Route>
 								<Route path="/" element={<Home {...homeProps} />} />
-								{/* <Route path="/register" element={<Register {...props} />} /> */}
-								{/* <Route path="/users/:verification_status" element={<Users {...props} />} /> */}
-								{/* <Route path="/users" element={<Users {...props} />} /> */}
-								{/* <Route path="/transactions/:transaction_status" element={<Transactions {...props} />} /> */}
-								{/* <Route path="/transactions" element={<Transactions {...props} />} /> */}
 						</Routes>
 					</div>
 					<SongController {...songControllerProps}/>
-					{/* <div className="container-fluid">
-						<div className="row">
-							
-						</div>
-					</div> */}
-	
 				</div>
 			</Router>
 		)
+	} else{
+		return (
+			<Router>
+				<div className="App">
+					<Alerts {...alertProps} />
+					<AdminSidebar {...sidebarProps}/>
+					<div className="side-container">
+						<Navbar {...navbarProps} />
+						<Routes>
+							<Route path="/" element={<DashboardAdmin {...homeProps} />} />
+						</Routes>
+					</div>
+	
+				</div>
+			</Router>
+		);
 	}
 }
 export default App
