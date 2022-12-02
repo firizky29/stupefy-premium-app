@@ -36,16 +36,15 @@ const DashboardAdmin= (props: any) => {
     
     useEffect(() => {
         (async () => {
-            const response = await fetch(`${API_URL}/song?page=${currentPage}&limit=${limit}`, {
+            const response = await fetch(`${API_URL}/subscription-request?page=${currentPage}&limit=${limit}`, {
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
             });
 
             if (response.status === 200) {
-                // console.log(response);
                 const data = await response.json();
-                // console.log(data);
-                
+                const xmldata = data.data;
+                console.log(data);
                 setSubscriptions(data.data);
                 setTotalPages(data.total_page);
                 if(currentPage > data.total_page) {
@@ -122,7 +121,7 @@ const DashboardAdmin= (props: any) => {
             props.setShowAlert(true);
 
             (async () => {
-                const response = await fetch(`${API_URL}/sub?page=${currentPage}&limit=${limit}`, {
+                const response = await fetch(`${API_URL}/subscription-request?page=${currentPage}&limit=${limit}`, {
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
                 });

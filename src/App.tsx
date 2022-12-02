@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
 
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
-import AdminSidebar from './components/Sidebar'
+import AdminSidebar from './components/AdminSidebar'
 import SongController from './components/SongController'
 import Alerts from './components/Alerts'
 
@@ -42,6 +42,8 @@ function App() {
 	})
 
 	const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+	// let navigate = useNavigate();
 
 
 	// const props = {
@@ -143,6 +145,7 @@ function App() {
 				const data = await response.json();
 				setUser(preValue => { return { ...preValue, role: data.role, name:data.name} })
 				setIsLoggedIn(true)
+				// navigate('/')
 			} else {
 				setUser(preValue => {
 					return {
@@ -152,6 +155,7 @@ function App() {
 					}
 				})
 				setIsLoggedIn(false)
+				// navigate('/login')
 			}
 		}
 		)();
@@ -171,7 +175,7 @@ function App() {
 			</Router>
 		)
 	}
-	else if(user.role !== 'admin'){
+	else if(user.role !== 'Admin'){
 		return (
 			<Router>
 				<div className="App">
